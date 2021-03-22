@@ -20,6 +20,8 @@ $if(letterhead)$
   \ULCornerWallPaper{1}{letterhead.pdf}
 $endif$
 
+\usepackage{multicol}
+
 % TYPOGRAPHY
 %--------------------------------
 \usepackage{fontspec} 
@@ -51,15 +53,17 @@ $endif$
 % TABLE CUSTOMIZATION
 %--------------------------------
 \usepackage{spreadtab}
+\usepackage{tabularx}
 \usepackage[compact]{titlesec} % For customizing title sections
 \titlespacing*{\section}{0pt}{3pt}{-7pt} % Remove margin bottom from the title
+\titleformat*{\section}{\Large\bfseries\sffamily}
 \usepackage{arydshln} % For the dotted line on the table
 \renewcommand{\arraystretch}{1.5} % Apply vertical padding to table cells
 \usepackage{hhline} % For single-cell borders
 \usepackage{enumitem} % For customizing lists
 \setlist{nolistsep} % No whitespace around list items
 \setlist[itemize]{leftmargin=0.5cm} % Reduce list left indent
-\setlength{\tabcolsep}{9pt} % Larger gutter between columns
+\setlength{\tabcolsep}{7pt} % Larger gutter between columns
 
 
 % LANGUAGE
@@ -92,59 +96,99 @@ $endif$
 % DOCUMENT
 %--------------------------------
 \begin{document}
+\sffamily
 \small
 \textsc{\textbf{$author$}}
 $for(from)$
 \textbullet{} \textsc{$from$}
 $endfor$
 
-\vspace{1em}
+\vspace{6em}
 
-\normalsize \sffamily
+\normalsize 
+\begin{multicols}{2}
+\textbf{From:}\\
+$company$\\
+$for(from)$
+$from$\\
+$endfor$
+\vspace{1em}
+UID: $uid$\\
+\columnbreak
+\textbf{To:}\\
 $for(to)$
 $to$\\
 $endfor$
+\vspace{1em}
+Reference: $reference$\\
+Cost-center Nr.: $cost-center-nr$
+\end{multicols}
 
-\vspace{6em}
-
-\begin{flushright}
-  \small
-  $city$, \today
-\end{flushright}
-
+\vspace{3em}
+\small
+$city$, \today
 \vspace{1em}
 
-
 \section*{\textsc{Invoice} \textsc{\#$invoice-nr$}}
-\footnotesize
+%\normalsize
 \newcounter{pos}
 \setcounter{pos}{0}
 \STautoround*{2} % Get spreadtab to always display the decimal part
 $if(commasep)$\STsetdecimalsep{,}$endif$ % Use comma as decimal separator
 
-\begin{spreadtab}{{tabular}[t t t]{lp{8.2cm}r}}
+\begin{spreadtab}{{tabularx}{\textwidth}{Xrrr}}
   \hdashline[1pt/1pt]
-  @ \noalign{\vskip 2mm} \textbf{Pos.} & @ \textbf{Description} & @ \textbf{Prices in $currency$} \\ \hline
-      $for(service)$ @ \noalign{\vskip 2mm} \refstepcounter{pos} \thepos 
-        & @ $service.description$ 
-        $if(service.details)$\newline \begin{itemize} 
-          $for(service.details)$\scriptsize \item $service.details$ 
-          $endfor$ \end{itemize}
-          $endif$ & $service.price$\\$endfor$ \noalign{\vskip 2mm} \hline
+  @ \noalign{\vskip 2mm} \textbf{Description} & 
+  @ \textbf{Hours} & 
+  @ \textbf{Rate} & 
+  @ \textbf{Amount} \\ 
+  \hline
+  $for(service)$ @ \noalign{\vskip 2mm} @ $service.description$
+    $if(service.details)$
+      \begin{itemize}
+        $for(service.details)$ \footnotesize \item $service.details$ $endfor$ 
+      \end{itemize}
+    $endif$ & 
+    $service.hours$ & 
+    $service.rate$ & 
+    :={[-2,0]*[-1,0]} $currency$\\
+  $endfor$ %\noalign{\vskip 0mm} 
+  \hline
   $if(VAT)$
-    @ & @ \multicolumn{1}{r}{Subtotal:}                & :={sum(c1:[0,-1])} \\ \hhline{~~-}
-    @ & @ \multicolumn{1}{r}{VAT $VAT$\%:}               & $VAT$/100*[0,-1] \\ \hhline{~~-}
+    & &  
+    @ \multicolumn{1}{r}{Subtotal:} & 
+    :={sum(c1:[0,-1])} $currency$\\ 
+    \hhline{~~~-}
+    & &  
+    @ \multicolumn{1}{r}{VAT $VAT$\%:} & 
+    :={$VAT$/100*[0,-1]} $currency$\\ 
+    \hhline{~~~-}
   $endif$
-  @ & @ \multicolumn{1}{r}{\textbf{Total:}}   & \textbf{:={$if(VAT)$[0,-1]+[0,-2]$else$sum(c1:[0,-1])$endif$}} \\ \hhline{~~-}
+    & &  
+    @ \multicolumn{1}{r}{\textbf{Total:}}   
+    & \textbf{:={$if(VAT)$[0,-1]+[0,-2]$else$sum(c1:[0,-1])$endif$} $currency$} \\ 
+    \hhline{~~~-}
 \end{spreadtab}
 
-
-\vspace{15mm}
+\vspace{3em}
 
 \sffamily
 \small
 $closingnote$
+Please transfer the due amount to the following bank account\\
 
+\vspace{3mm}
+\renewcommand{\arraystretch}{1} 
+\begin{tabular}{ll}
+  Name: & $author$\\
+  Bank: & $bank$\\
+  Account-Nr.: & $account-nr$\\
+  IBAN: & $iban$\\
+  BIC: & $bic$
+\end{tabular}
+
+\vspace{6em}
+Best Regards,\\
 \medskip
 
 \IfFileExists{signature.pdf}
