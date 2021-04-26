@@ -27,7 +27,7 @@ $endif$
 \usepackage{fontspec} 
 \usepackage{xunicode}
 \usepackage{xltxtra}
-
+\usepackage{marvosym}
 % converts LaTeX specials (quotes, dashes etc.) to Unicode
 \defaultfontfeatures{Mapping=tex-text}
 \setromanfont [Ligatures={Common}, Numbers={OldStyle}]{$seriffont$}
@@ -103,6 +103,9 @@ $for(from)$
 \textbullet{} \textsc{$from$}
 $endfor$
 
+\Email~~$email$
+~~\textbullet{}~~
+\Telefon~~$phone$
 \vspace{6em}
 
 \normalsize 
@@ -113,7 +116,7 @@ $for(from)$
 $from$\\
 $endfor$
 \vspace{1em}
-UID: $uid$\\
+UID: \href{$uid-url$}{$uid$}\\
 \columnbreak
 \textbf{To:}\\
 $for(to)$
@@ -121,7 +124,7 @@ $to$\\
 $endfor$
 \vspace{1em}
 Reference: $reference$\\
-Cost-center Nr.: $cost-center-nr$
+Cost Center: $cost-center$
 \end{multicols}
 
 \vspace{3em}
@@ -174,8 +177,7 @@ $if(commasep)$\STsetdecimalsep{,}$endif$ % Use comma as decimal separator
 
 \sffamily
 \small
-$closingnote$
-Please transfer the due amount to the following bank account\\
+Please transfer the due amount to the following bank account:
 
 \vspace{3mm}
 \renewcommand{\arraystretch}{1} 
@@ -188,7 +190,7 @@ Please transfer the due amount to the following bank account\\
 \end{tabular}
 
 \vspace{6em}
-Best Regards,\\
+Best regards,\\
 \medskip
 
 \IfFileExists{signature.pdf}

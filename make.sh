@@ -1,5 +1,5 @@
 #!/bin/sh
-me=me 
+me=me.yaml
 client=${1%.yaml}
 invoice=${2%.yaml}
 
