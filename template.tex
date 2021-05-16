@@ -147,6 +147,12 @@ $if(commasep)$\STsetdecimalsep{,}$endif$ % Use comma as decimal separator
   @ \textbf{Amount} \\ 
   \hline
   $for(service)$ @ \noalign{\vskip 2mm} @ $service.description$
+    $if(service.period)$
+    \vspace{1mm}
+    \footnotesize \newline
+    \textit{Period from $service.period.start$ to $service.period.end$}
+    \vspace{1mm}
+    $endif$
     $if(service.details)$
       \begin{itemize}
         $for(service.details)$ \footnotesize \item $service.details$ $endfor$ 
